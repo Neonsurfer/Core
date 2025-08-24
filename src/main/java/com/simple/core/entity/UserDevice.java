@@ -1,8 +1,6 @@
 package com.simple.core.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -10,8 +8,13 @@ import lombok.Data;
 @Table(name = "UserDevice")
 public class UserDevice {
 
-    @Column(name = "userId", nullable = false)
-    Long userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
     @Column(name = "deviceHash", nullable = false, unique = true)
-    String deviceHash;
+    private String deviceHash;
 }

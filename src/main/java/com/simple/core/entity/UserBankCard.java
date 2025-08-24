@@ -11,25 +11,26 @@ import java.math.BigDecimal;
 @Table(name = "UserBankCard")
 public class UserBankCard {
 
-    @Column(name = "userId", nullable = false)
-    Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
     @Id
     @Column(name = "cardId", nullable = false)
-    String cardId;
+    private String cardId;
     @Column(name = "cardNumber", nullable = false, unique = true)
-    String cardNumber;
+    private String cardNumber;
     @Column(name = "cvc", nullable = false)
-    String cvc;
+    private String cvc;
     @Column(name = "name")
-    String name;
+    private String name;
     @Column(name = "amount")
-    BigDecimal amount;
+    private BigDecimal amount;
     @Column(name = "currency")
-    String currency;
+    private String currency;
 
     @PrePersist
     public void generateCardId() {
-        if (this.userId == null) {
+        if (this.user.getUserId() == null) {
             EntityManager em = EntityManagerProvider.getEntityManager();
             Long nextVal = (Long) em.createNativeQuery("SELECT NEXT VALUE FOR card_id_seq").getSingleResult();
 

@@ -1,8 +1,8 @@
-## Schemas
+-- Schemas
 CREATE SCHEMA IF NOT EXISTS SIMPLE;
 
 
-## Tables
+-- Tables
 CREATE TABLE IF NOT EXISTS SIMPLE.Users(
     userId INT PRIMARY KEY AUTO_INCREMENT(1000, 1000),
     name VARCHAR(100) NOT NULL,
@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS SIMPLE.UserBankCard(
     currency VARCHAR(100) DEFAULT 'HUF'
 );
 
-## Sequences
+-- Sequences
 CREATE SEQUENCE card_id_seq START WITH 1 INCREMENT BY 1;
