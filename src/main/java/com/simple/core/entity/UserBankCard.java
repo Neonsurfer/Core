@@ -1,5 +1,6 @@
 package com.simple.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.simple.core.util.EntityManagerProvider;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,9 +9,10 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name = "UserBankCard")
+@Table(name = "user_bank_card")
 public class UserBankCard {
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
     private User user;

@@ -14,8 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             FROM User u
             JOIN u.cards c
             JOIN u.tokens t
-            WHERE c.id = :cardId
+            WHERE c.cardId = :cardId
             AND t.token = :userToken
             """)
-    boolean validateUserTokenAndCardId(@Param("userToken") String userToken, @Param("cardId") Long cardId);
+    boolean validateUserTokenAndCardId(@Param("userToken") String userToken, @Param("cardId") String cardId);
 }

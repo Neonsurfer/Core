@@ -1,20 +1,19 @@
 package com.simple.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "UserDevice")
+@Table(name = "user_device")
 public class UserDevice {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+    @Id
     @Column(name = "deviceHash", nullable = false, unique = true)
     private String deviceHash;
 }

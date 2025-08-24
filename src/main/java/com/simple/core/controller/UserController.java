@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/validate/{userToken}/{cardId}")
     @ResponseStatus(HttpStatus.OK)
-    public Boolean validateUserTokenAndCardId(@PathVariable String userToken, @PathVariable Long cardId) {
+    public Boolean validateUserTokenAndCardId(@PathVariable String userToken, @PathVariable String cardId) {
         return service.validateUserTokenAndCardId(userToken, cardId);
     }
 

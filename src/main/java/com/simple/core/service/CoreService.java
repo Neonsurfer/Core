@@ -16,7 +16,7 @@ public class CoreService {
     @Autowired
     UserRepository userRepository;
 
-    public Boolean validateUserTokenAndCardId(String userToken, Long cardId) {
+    public Boolean validateUserTokenAndCardId(String userToken, String cardId) {
         return userRepository.validateUserTokenAndCardId(userToken, cardId);
     }
 
