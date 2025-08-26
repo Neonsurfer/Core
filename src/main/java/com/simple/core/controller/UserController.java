@@ -4,10 +4,7 @@ import com.simple.core.entity.User;
 import com.simple.core.service.CoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +18,12 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public Boolean validateUserTokenAndCardId(@PathVariable String userToken, @PathVariable String cardId) {
         return service.validateUserTokenAndCardId(userToken, cardId);
+    }
+
+    @PostMapping("/reserve/{eventId}/{seatId}/{cardId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Long reserveSeatAndPay(@PathVariable Long eventId, @PathVariable String seatId, @PathVariable String cardId) {
+        return service.reserveSeatAndPay(eventId, seatId, cardId);
     }
 
     @GetMapping("/find/{userId}")
