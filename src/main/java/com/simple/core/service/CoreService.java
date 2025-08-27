@@ -75,7 +75,8 @@ public class CoreService {
             return webClient.get()
                     .uri("/ticket/getEvent/{eventId}", eventId)
                     .retrieve()
-                    .bodyToMono(SimpleEventDto.class).blockOptional().orElseThrow();
+                    .bodyToMono(SimpleEventDto.class)
+                    .block();
         } catch (WebClientResponseException e) {
             ErrorResponse response = objectMapper.readValue(e.getResponseBodyAsString(), ErrorResponse.class);
             throw new BusinessException(response.getErrorMessage(), response.getErrorCode());
@@ -88,7 +89,8 @@ public class CoreService {
             return webClient.get()
                     .uri("/ticket/getEvents")
                     .retrieve()
-                    .bodyToMono(ExtendedEventDto.class).blockOptional().orElseThrow();
+                    .bodyToMono(ExtendedEventDto.class)
+                    .block();
         } catch (WebClientResponseException e) {
             ErrorResponse response = objectMapper.readValue(e.getResponseBodyAsString(), ErrorResponse.class);
             throw new BusinessException(response.getErrorMessage(), response.getErrorCode());
@@ -100,7 +102,8 @@ public class CoreService {
             return webClient.post()
                     .uri("/ticket/reserve/{eventId}/{seatId}", eventId, seatId)
                     .retrieve()
-                    .bodyToMono(ReserveDto.class).blockOptional().orElseThrow();
+                    .bodyToMono(ReserveDto.class)
+                    .block();
         } catch (WebClientResponseException e) {
             ErrorResponse response = objectMapper.readValue(e.getResponseBodyAsString(), ErrorResponse.class);
             throw new BusinessException(response.getErrorMessage(), response.getErrorCode());
