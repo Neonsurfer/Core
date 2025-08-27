@@ -3,6 +3,7 @@ package com.simple.core.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -26,14 +27,17 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @ToString.Exclude
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserDevice> devices;
 
+    @ToString.Exclude
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserBankCard> cards;
 
+    @ToString.Exclude
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserToken> tokens;

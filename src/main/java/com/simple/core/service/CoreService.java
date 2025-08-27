@@ -1,5 +1,7 @@
 package com.simple.core.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simple.core.entity.User;
 import com.simple.core.entity.UserBankCard;
 import com.simple.core.error.*;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.Instant;
 import java.util.List;
@@ -20,7 +23,8 @@ import java.util.List;
 @Service
 public class CoreService {
     private final WebClient webClient;
-
+    @Autowired
+    ObjectMapper objectMapper;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -45,13 +49,13 @@ public class CoreService {
     }
 
     @Transactional
-    public Long reserveSeatAndPay(Long eventId, String seatId, String cardId) {
+    public Long reserveSeatAndPay(Long eventId, String seatId, String cardId) throws JsonProcessingException {
         SimpleEventDto eventDto = getEventById(eventId);
         UserBankCard card = userBankCardRepository.findById(cardId).orElseThrow(UserBankCardMismatchException::new);
         SeatDto currentSeat = eventDto.getSeats().stream().filter(t -> t.getId().equals(seatId)).findFirst().orElseThrow(SeatNotFoundException::new);
         ExtendedEventDto extendedEventDto = getEvents();
         EventDto currentEvent = extendedEventDto.getData().stream().filter(t -> t.getEventId().equals(eventId)).findFirst().orElseThrow(EventNotFoundException::new);
-
+        log.info("Bank card and event info queried, validating");
         if (currentSeat.getReserved()) {
             throw new SeatNotFoundException();
         }
@@ -66,25 +70,41 @@ public class CoreService {
         return reserveByEventAndSeat(eventId, seatId).getReserverId();
     }
 
-    private SimpleEventDto getEventById(Long eventId) {
-        return webClient.get()
-                .uri("/ticket/getEvent/{eventId}", eventId)
-                .retrieve()
-                .bodyToMono(SimpleEventDto.class).blockOptional().orElseThrow();
+    private SimpleEventDto getEventById(Long eventId) throws JsonProcessingException {
+        try {
+            return webClient.get()
+                    .uri("/ticket/getEvent/{eventId}", eventId)
+                    .retrieve()
+                    .bodyToMono(SimpleEventDto.class).blockOptional().orElseThrow();
+        } catch (WebClientResponseException e) {
+            ErrorResponse response = objectMapper.readValue(e.getResponseBodyAsString(), ErrorResponse.class);
+            throw new BusinessException(response.getErrorMessage(), response.getErrorCode());
+        }
+
     }
 
-    private ExtendedEventDto getEvents() {
-        return webClient.get()
-                .uri("/ticket/getEvents/")
-                .retrieve()
-                .bodyToMono(ExtendedEventDto.class).blockOptional().orElseThrow();
+    private ExtendedEventDto getEvents() throws JsonProcessingException {
+        try {
+            return webClient.get()
+                    .uri("/ticket/getEvents")
+                    .retrieve()
+                    .bodyToMono(ExtendedEventDto.class).blockOptional().orElseThrow();
+        } catch (WebClientResponseException e) {
+            ErrorResponse response = objectMapper.readValue(e.getResponseBodyAsString(), ErrorResponse.class);
+            throw new BusinessException(response.getErrorMessage(), response.getErrorCode());
+        }
     }
 
-    private ReserveDto reserveByEventAndSeat(Long eventId, String seatId) {
-        return webClient.get()
-                .uri("/ticket/reserve/{eventId}/{seatId}", eventId, seatId)
-                .retrieve()
-                .bodyToMono(ReserveDto.class).blockOptional().orElseThrow();
+    private ReserveDto reserveByEventAndSeat(Long eventId, String seatId) throws JsonProcessingException {
+        try {
+            return webClient.post()
+                    .uri("/ticket/reserve/{eventId}/{seatId}", eventId, seatId)
+                    .retrieve()
+                    .bodyToMono(ReserveDto.class).blockOptional().orElseThrow();
+        } catch (WebClientResponseException e) {
+            ErrorResponse response = objectMapper.readValue(e.getResponseBodyAsString(), ErrorResponse.class);
+            throw new BusinessException(response.getErrorMessage(), response.getErrorCode());
+        }
     }
 
 }

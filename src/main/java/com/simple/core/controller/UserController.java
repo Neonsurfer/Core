@@ -1,5 +1,6 @@
 package com.simple.core.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.simple.core.entity.User;
 import com.simple.core.service.CoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class UserController {
 
     @PostMapping("/reserve/{eventId}/{seatId}/{cardId}")
     @ResponseStatus(HttpStatus.OK)
-    public Long reserveSeatAndPay(@PathVariable Long eventId, @PathVariable String seatId, @PathVariable String cardId) {
+    public Long reserveSeatAndPay(@PathVariable Long eventId, @PathVariable String seatId, @PathVariable String cardId) throws JsonProcessingException {
         return service.reserveSeatAndPay(eventId, seatId, cardId);
     }
 
